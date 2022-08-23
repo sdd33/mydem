@@ -4,6 +4,7 @@ import React from 'react';
 import './index.less';
 const { Header, Content, Footer, Sider } = Layout;
 
+
 const items1 = ['商城', '我的' ].map((key,i) => ({
   key: i+1,
   label: `${key}`,
@@ -33,14 +34,12 @@ map((icon,
 function button1(key: string){
   console.log(key);
 }
-
 function button2(item: string){
   console.log(item);
 }
 
 const App = () => (
   <Layout>
-
     <Header className="header">
       <Layout>
         <Sider>
@@ -60,7 +59,7 @@ const App = () => (
       <Breadcrumb style={{ margin: '16px 0', }}>
       </Breadcrumb>
 
-      <Layout className="site-layout-background" style={{ padding: '24px 0', }}>
+      <Layout className="site-layout-background" style={{ padding: '24px 0', height : 600 } }>
         <Sider className="site-layout-background" width={200}>
           <Menu mode="inline" defaultSelectedKeys={['1']}
                 defaultOpenKeys={['sub1']}
@@ -69,11 +68,12 @@ const App = () => (
                 onClick={(e) =>button2(e.key)}/>
         </Sider>
         <Content style={{ padding: '0 24px', minHeight: 280, }}>
-          Content
+          content
         </Content>
       </Layout>
-
     </Content>
+
+
     <Footer style={{ textAlign: 'center', }}>
     </Footer>
   </Layout>
