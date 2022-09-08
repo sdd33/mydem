@@ -1,12 +1,22 @@
-import React, { createContext,useState } from 'react'
+import React from 'react'
 import {Form, Input, Checkbox, Button, message} from 'antd';
-import logo from '@/assets/logo.png';
 import './index.less';
 import {useStore} from "@/pages/store";
 import { history } from 'umi';
 import { observer } from 'mobx-react-lite'
+import axios from 'axios';
+import {getToken} from '@/pages/utils'
+import { values } from 'mobx';
 
+let token = getToken() || '';
 
+const comlist = axios({
+  method:'get',
+  url:'http://localhost:3000/login/get',
+  headers: {
+    "my_token": token
+  }
+})
 
 function login() {
   // @ts-ignore
@@ -14,9 +24,16 @@ function login() {
   // @ts-ignore
   const {loginstateStore} = useStore();
 
-  const [state,setstate] = useState({
-    issucess: false,
-    username: ''
+  comlist.then((res)=>{
+    console.log(res.data);
+    if (res.data.code === 0 && getToken()!=='null') {
+      loginstateStore.login();
+      message.success('登陆成功');
+      history.push('/layout/'+getToken());
+    } else {
+      message.error('token已失效，请重新登陆');
+    }
+
   })
 
   async function onFinish(values :any) {
@@ -26,17 +43,18 @@ function login() {
         code: values.password
       }).then((res) => {
         console.log(res)
-        if (res.code === 0) {
+        if (res.code === 0  && getToken()!=='null') {
           loginstateStore.login();
           message.success('登陆成功');
-          history.push('/layout');
+          history.push('/layout/'+getToken());
         } else {
-          message.success('登陆失败 密码错误');
+          message.error('登陆失败 密码错误');
+
         }
       })
     } catch (e) {
       console.log(e)
-      message.success('登陆失败 未知错误'+e);
+      message.error('登陆失败 未知错误'+e);
     }
   }
 
@@ -47,8 +65,7 @@ function login() {
 
   return (
       <div className ='login'>
-      <img className ='login-logo' src={logo} alt=''/>
-
+      <h1>3D Library</h1>
       <div className = 'login-container'>
         <Form initialValues={{ remember: true, }} onFinish={onFinish}>
 
@@ -76,7 +93,6 @@ function login() {
           </Form.Item>
 
           <Form.Item name="remember" valuePropName="checked">
-            <Checkbox>记住密码</Checkbox>
             <Checkbox>我已阅读并同意「用户协议」和「隐私条款」</Checkbox>
           </Form.Item>
 

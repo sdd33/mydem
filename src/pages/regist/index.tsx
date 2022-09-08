@@ -71,6 +71,7 @@ const Regist: React.FC = () => {
 
   return (
     <div className='login'>
+    <h1>Regist</h1>
     <Form {...layout} form={form} className='regist-container' name="control-hooks" onFinish={onFinish}>
       <Form.Item name="username"
        rules={[
@@ -116,7 +117,7 @@ const Regist: React.FC = () => {
 
       <Form.Item>
         <Row gutter={8}>
-          <Col span={12}>
+          <Col span={12} >
             <Form.Item
               name="captcha"
               noStyle
@@ -133,11 +134,11 @@ const Regist: React.FC = () => {
       </Form.Item>
 
       <Form.Item {...tailLayout}>
-        <Space size={10}>
-          <Button type="primary" htmlType="submit">
+        <Space size={70}>
+          <Button type="primary" htmlType="submit" className="butt">
             注册
           </Button>
-          <Button htmlType="button" onClick={onReset}>
+          <Button htmlType="button" onClick={onReset} className="butt">
             重置
           </Button>
         </Space>

@@ -1,64 +1,84 @@
 import { useEffect, useRef, useState } from "react";
 // @ts-ignore
 import * as THREE from "three";
+import {useStore} from '@/pages/store';
+import { useHistory,useParams } from 'react-router-dom';
+import axios from 'axios';
 
-const modolview = () => {
 
+
+const Modolview = (props:any) => {
+  const {upimagestore} = useStore();
   const mountRef = useRef(null);
-  const [col,setcolor] = useState(true)
+  const [col,setcolor] = useState(true);
+
+  const params = useParams();
+  console.log(params.id);
+
+
   const transcolor = ()=>{
     console.log(col);
     setcolor(!col);
   }
+  const getpicture = () => {
+    const canvas:any = document.querySelectorAll("#myDiv canvas")[0];
+    console.log(canvas);
+    canvas.toBlob((bob:any) => {
+      console.log(bob);
+      const formData = new FormData();
+      formData.append('img',bob);
+      upimagestore.sendimage(formData).then((res)=>{
+        console.log(res);
+      })
+    });
+  }
 
   useEffect(() => {
-
-    var scene = new THREE.Scene();
-    var geometry = new THREE.BoxGeometry(100, 100, 100);
-    var material = new THREE.MeshLambertMaterial({ color: col? 'red':'blue' });
-    var mesh = new THREE.Mesh(geometry, material);
+    let scene = new THREE.Scene();
+    let geometry = new THREE.BoxGeometry(100, 100, 100);
+    console.log(col);
+    let material = new THREE.MeshLambertMaterial({ color: col? 'red':'green' });
+    let mesh = new THREE.Mesh(geometry,material);
+    console.log(mesh);
     scene.add(mesh);
-
-    var point = new THREE.PointLight(0xffffff);
+    let point = new THREE.PointLight(0xffffff);
     point.position.set(400, 200, 300);
     scene.add(point);
-
-    var ambient = new THREE.AmbientLight(0x444444);
+    let ambient = new THREE.AmbientLight(0x444444);
     scene.add(ambient);
-
-    var width = window.innerWidth;
-    var height = window.innerHeight;
-    var k = width / height;
-    var s = 200;
-
-    var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
-    camera.position.set(200, 300, 200);
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let k = width / height;
+    let s = 200;
+    let camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+    camera.position.set(200, 100, 200);
     camera.lookAt(scene.position);
 
-    var renderer = new THREE.WebGLRenderer();
+    let renderer = new THREE.WebGLRenderer({
+      // @ts-ignore
+      canvas: mountRef.current
+    });
     renderer.setSize(width, height);
     renderer.setClearColor(0xb9d3ff, 1);
-    document.body.appendChild(renderer.domElement);
 
-    var animate = function () {
+    let animate = function () {
       requestAnimationFrame( animate );
       mesh.rotation.y += 0.01;
       renderer.render( scene, camera );
     };
     animate();
-    // @ts-ignore
-    mountRef.current.appendChild( renderer.domElement );
-    // @ts-ignore
-    return () => mountRef.current.removeChild( renderer.domElement);
-  }, );
+
+  }, []);
 
   return (
+
     <div>
       <button onClick={transcolor}>切换颜色</button>
-      <div ref={mountRef}>
-      </div>
+      <button onClick={getpicture}>获取当前渲染图片</button>
+      <canvas  ref={mountRef}>
+      </canvas>
     </div>
   );
 }
 
-export default modolview;
+export default Modolview;
