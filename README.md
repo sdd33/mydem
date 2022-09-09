@@ -13,3 +13,9 @@ Start the dev server,
 ```bash
 $ yarn start
 ```
+
+注册,
+
+```bash
+http://localhost:8000/regist
+```
